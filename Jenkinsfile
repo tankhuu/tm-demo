@@ -33,11 +33,13 @@ pipeline{
   agent any
 
   stages {
-    stage('Versioning') {
+    stage('Build on Tag') {
       when { tag pattern: "^v(\\d+\\.)?(\\d+\\.)?(\\*|\\d+)\$", comparator: "REGEXP" }
       steps {
         echo "=> Versioning for build"
-        sh "cat build.gradle"
+        sh "printenv"
+        echo "$TAG_NAME"
+        sh "./gradlew -Pversion=${TAG_NAME} build"
       }
     }
     stage('Build') {
@@ -45,12 +47,12 @@ pipeline{
       steps {
         echo "=> Build Version"
         sh './gradlew build'
-        sh 'ls -l build/libs/'
       }
     }
     stage('Package') {
       steps {
         echo "=> Dockerize tm-demo"
+        sh 'ls -l build/libs/'
       }
     }
   }
