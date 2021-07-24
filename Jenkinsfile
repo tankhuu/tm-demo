@@ -75,7 +75,7 @@ pipeline{
   post {
     always {
       echo "=> Clean Workspace after run"
-      cleanWs()
+      // cleanWs()
     }
     success {
       echo "==> Build Success"
