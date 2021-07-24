@@ -34,7 +34,7 @@ pipeline{
 
   stages {
     stage('Build') {
-      when { not { branch 'master' } }
+      when { branch 'master' }
       steps {
         echo "=> Build Version"
         sh './gradlew build'
