@@ -33,6 +33,13 @@ pipeline{
   agent any
 
   stages {
+    stage('Versioning') {
+      when { tag pattern: "^v(\d+\.)?(\d+\.)?(\*|\d+)$", comparator: "REGEXP"}
+      steps {
+        echo "=> Versioning for build"
+        sh "cat build.gradle"
+      }
+    }
     stage('Build') {
       when { branch 'master' }
       steps {
@@ -42,11 +49,6 @@ pipeline{
       }
     }
     stage('Package') {
-      steps {
-        echo "=> Upload Artifact to S3"
-      }
-    }
-    stage('Dockerize') {
       steps {
         echo "=> Dockerize tm-demo"
       }
