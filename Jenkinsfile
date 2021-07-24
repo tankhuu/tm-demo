@@ -32,34 +32,50 @@ def notifySlack(branch, version, commit, channel) {
 pipeline{
   agent any
 
+  environment { 
+    registry = "tankhuuor/demo" 
+    registryCredential = 'dockerhub_id' 
+    dockerImage = '' 
+  }
+
   stages {
     stage('Build on Tag') {
       when { tag pattern: "^v(\\d+\\.)?(\\d+\\.)?(\\*|\\d+)\$", comparator: "REGEXP" }
       steps {
-        echo "=> Versioning for build"
-        sh "printenv"
-        echo "$TAG_NAME"
-        sh "./gradlew -Pversion=${TAG_NAME} build"
+        echo "=> Build Tag"
+        script {
+          env.version = "$TAG_NAME"
+        }
+        sh "./gradlew -Pversion=${version} build"
       }
     }
     stage('Build') {
       when { branch 'master' }
       steps {
-        echo "=> Build Version"
-        sh './gradlew build'
+        echo "=> Build Master"
+        script {
+          env.version = "${GIT_COMMIT.substring(0,7)}"
+        }
+        sh "./gradlew -Pversion=${version} build"
       }
     }
     stage('Package') {
       steps {
         echo "=> Dockerize tm-demo"
-        sh 'ls -l build/libs/'
+        script {
+          dockerImage = docker.build("$registry:${version}", "--build-arg version=$version")
+          docker.withRegistry( '', registryCredential ) {
+            dockerImage.push()
+          }
+          sh "docker rmi $registry:$version"
+        }
       }
     }
   }
   post {
     always {
       echo "=> Clean Workspace after run"
-      // cleanWs()
+      cleanWs()
     }
     success {
       echo "==> Build Success"

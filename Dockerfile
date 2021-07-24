@@ -1,4 +1,5 @@
 FROM centos:7
+ARG VERSION
 RUN mkdir -p /app
-ADD *.jar /app/demo.jar
+ADD demo-${VERSION}.jar /app/demo.jar
 EXPOSE 8080
