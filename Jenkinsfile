@@ -37,11 +37,18 @@ pipeline{
       when { not { branch 'master' } }
       steps {
         echo "=> Build Version"
+        sh './gradlew build'
+        sh 'ls -l build/libs/'
       }
     }
     stage('Package') {
       steps {
-        echo "==> Upload Artifact to S3"
+        echo "=> Upload Artifact to S3"
+      }
+    }
+    stage('Dockerize') {
+      steps {
+        echo "=> Dockerize tm-demo"
       }
     }
   }
