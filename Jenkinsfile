@@ -34,7 +34,7 @@ pipeline{
 
   stages {
     stage('Versioning') {
-      when { tag pattern: "^v(\\d+\.)?(\\d+\.)?(\\*|\\d+)$", comparator: "REGEXP" }
+      when { tag pattern: "^v(\\d+\\.)?(\\d+\\.)?(\\*|\\d+)$", comparator: "REGEXP" }
       steps {
         echo "=> Versioning for build"
         sh "cat build.gradle"
