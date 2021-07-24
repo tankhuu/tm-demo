@@ -62,12 +62,14 @@ pipeline{
     stage('Package') {
       steps {
         echo "=> Dockerize tm-demo"
-        script {
-          dockerImage = docker.build("$registry:${version}", "--build-arg version=$version")
-          docker.withRegistry( '', registryCredential ) {
-            dockerImage.push()
+        dir('build/libs/') {
+          script {
+            dockerImage = docker.build("$registry:${version}", "--build-arg version=$version")
+            docker.withRegistry( '', registryCredential ) {
+              dockerImage.push()
+            }
+            sh "docker rmi $registry:$version"
           }
-          sh "docker rmi $registry:$version"
         }
       }
     }
