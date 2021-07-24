@@ -65,7 +65,7 @@ pipeline{
         echo "=> Dockerize tm-demo"
         script {
           docker.withRegistry( '', registryCredential ) {
-            dockerImage = docker.build("$registry:${version}")
+            dockerImage = docker.build("$registry:${version}", "--build-arg version=$version .")
             dockerImage.push()
           }
           sh "docker rmi $registry:$version"
