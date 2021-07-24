@@ -54,16 +54,17 @@ pipeline{
       steps {
         echo "=> Build Master"
         script {
-          env.version = "${GIT_COMMIT.substring(0,7)}"
+          // env.version = "${GIT_COMMIT.substring(0,7)}"
+          env.version = "3b27473"
         }
-        sh "./gradlew -Pversion=${version} build"
+        // sh "./gradlew -Pversion=${version} build"
       }
     }
     stage('Package') {
       steps {
         echo "=> Dockerize tm-demo"
         script {
-          docker.withRegistry( registry, registryCredential ) {
+          docker.withRegistry( '', registryCredential ) {
             dockerImage = docker.build("$registry:${version}")
             dockerImage.push()
           }
